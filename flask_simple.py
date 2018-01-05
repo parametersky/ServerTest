@@ -2,7 +2,21 @@ from flask import Flask,request
 import json
 app=Flask(__name__)
 import pika
+import datetime
+TEMPARATURE_FILE = open('tempFILE','a+')
 
+@app.route('/temprature',methods=['GET'])
+def temprature():
+    temp = request.args.get('temp')
+    humd = request.args.get('humid')
+    batt = request.args.get('battery')
+    
+    TEMPARATURE_FILE.write("%s,%s,%s,%s\n" % (datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),temp,humd,batt))
+    TEMPARATURE_FILE.flush()
+    return "OK"
+     
+    
+    
 @app.route('/login',methods=['GET'])
 def index():
     print("get request")
@@ -32,8 +46,9 @@ def userrecord():
         print('get user record for usr: ',uid,' datetime: ',datetime,' runtime: ',runtime,' distance: ',distance,' calories:',calories,' steps:',steps,' sportdata:',sportdata)
     elif request.method == 'POST':
         print('post get')
-        uid = request.form.get('uid')
-        datetime = request.form.get('datetime''')
+        print('post form',request.form)
+        uid = request.form.get('uid','')
+        datetime = request.form.get('datetime','')
         runtime = request.form.get('runtime', '')
         distance = request.form.get('distance', '')
         calories = request.form.get('calories', '')
