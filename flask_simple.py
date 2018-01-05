@@ -1,10 +1,13 @@
 from flask import Flask,request
+
 import json
 app=Flask(__name__)
 import pika
 import datetime
+import time
 TEMPARATURE_FILE = open('tempFILE','a+')
-
+from data import ses,Order
+from sqlalchemy import text
 @app.route('/temprature',methods=['GET'])
 def temprature():
     temp = request.args.get('temp')
@@ -15,7 +18,46 @@ def temprature():
     TEMPARATURE_FILE.flush()
     return "OK"
      
-    
+@app.route('/order',methods=['GET'])
+def order():
+    uid = request.args.get('uid',"123")
+    validTime = int(request.args.get('validTime','0'))
+    length = int(request.args.get('length','300'))
+
+    if (validTime+length) <= time.time():
+        print('not valid time')
+        return "invalid time"
+    if length <= 0:
+        print('invalid length of time')
+        return "invalid time length"
+    order = Order(uid=uid,validTime=validTime,length=length)
+    ses.add(order)
+    ses.commit()
+    return "OK"
+
+@app.route('/getorder',methods=['GET'])
+def getOrder():
+    now = int(time.time())
+    # result = ses.query(Order).filter(text('validTimer+length < :now')).params(now=now).all()
+    result = ses.query(Order).filter(text('validTime+length > :now')).params(now=now).all()
+
+    data = {"code":0,"message":""}
+    if result and len(result) > 0:
+        data['code'] = 0
+        data['message'] = "success"
+        data['data'] = {'length':len(result)}
+        data['data']['orders'] = []
+        for res in result:
+            data['data']['orders'].append(res.serial)
+
+        return json.dumps(data)
+    else:
+        data['code'] = 1
+        data['message'] = "no result"
+        print(json.dumps(data))
+        return json.dumps(data)
+
+
     
 @app.route('/login',methods=['GET'])
 def index():
