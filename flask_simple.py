@@ -64,16 +64,20 @@ def index():
     print("get request")
     serial = int(request.args.get('serial'))
     uid = request.args.get('uid')
-
-    content = json.dumps({"serial":serial,"uid":uid})
-    params = pika.ConnectionParameters(host='localhost',heartbeat_interval=0)
-    connection = pika.BlockingConnection(params)
-    channel = connection.channel()
-    channel.queue_declare(queue='hello')
-    channel.basic_publish(exchange='', routing_key='hello', body=content)
-    channel.close()
-    connection.close()
-    return "OK"
+    now = int(time.time())
+    result = ses.query(Order).filter(Order.uid==uid).filter(text("validTime+length > :now")).params(now=now).all()
+    if result and len(result) > 0:
+        content = json.dumps({"serial":serial,"uid":uid})
+        params = pika.ConnectionParameters(host='localhost',heartbeat_interval=0)
+        connection = pika.BlockingConnection(params)
+        channel = connection.channel()
+        channel.queue_declare(queue='hello')
+        channel.basic_publish(exchange='', routing_key='hello', body=content)
+        channel.close()
+        connection.close()
+        return "OK"
+    else:
+        return "NOT OK"
 @app.route('/userrecord',methods=['GET','POST'])
 def userrecord():
     print('user record')
