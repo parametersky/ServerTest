@@ -157,7 +157,7 @@ class MySocketServer():
                     continue
                 logi('serail: ', info['serial'])
                 serial = info['serial']
-                sothread = SocketThread(str(serial)+'-'+str(time.time()), sock)
+                sothread = SocketThread(serial+'-'+str(time.time()), sock)
                 sothread.start()
                 solist = self.socketlist
                 solist[serial] = sothread
