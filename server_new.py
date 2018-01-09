@@ -8,6 +8,7 @@ from queue import Queue
 from logging import Formatter,getLogger,FileHandler
 from logging.handlers import TimedRotatingFileHandler,RotatingFileHandler
 import logging
+import time
 
 from functools import reduce
 def getRotateHandler(dir):
@@ -156,7 +157,7 @@ class MySocketServer():
                     continue
                 logi('serail: ', info['serial'])
                 serial = info['serial']
-                sothread = SocketThread(str(serial), sock)
+                sothread = SocketThread(str(serial)+'-'+str(time.time()), sock)
                 sothread.start()
                 solist = self.socketlist
                 solist[serial] = sothread
