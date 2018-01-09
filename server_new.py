@@ -49,7 +49,7 @@ class SocketThread(Thread):
     def run(self):
         while self.work:
             data = self.sock.recv(1024)
-            logi('recive data',data)
+            logi(self.name,' recive data',data)
             str_data = str(data, encoding='utf-8')
             if str_data.startswith("test ok"):
                 self.send(b'this test is right')
@@ -62,7 +62,7 @@ class SocketThread(Thread):
         self.work = False
 
     def send(self, mesg):
-        logi('send message')
+        logi(self.name, ' send message')
         if self.work:
             self.sock.sendall(mesg)
         else:
