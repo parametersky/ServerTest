@@ -114,6 +114,10 @@ def getPlaylist():
     venueid= request.args.get('venueid')
     return '{"code":1,"msg":"sucess","data":[{"deleted":false,"downloaded":false,"endtime":43453,"id":"1","playlist":[{"downloaded":false,"filetype":".png","id":"1","md5":"324srfef","name":"pic1","path":"http://gdown.baidu.com/data/wisegame/df3e9d433f59a315/aiqiyi_81000.apk","size":1234,"version_id":"1234"},{"downloaded":false,"filetype":".png","id":"2","md5":"324srfef","name":"pic2","path":"/hehehe","size":1234,"version_id":"1234"},{"deleted":false,"downloaded":false,"endtime":23422,"id":"2","playlist":[{"downloaded":false,"filetype":".png","id":"1","md5":"324srfef","name":"pic1","path":"/hehe","size":1234,"version_id":"1234"},{"downloaded":false,"filetype":".png","id":"2","md5":"324srfef","name":"pic2","path":"/hehehe","size":1234,"version_id":"1234"}],"starttime":1234,"verison":"2345"}],"starttime":1234,"verison":"1234"}]}'
 
+@app.route('/bindApp',methods=['GET'])
+def bindApp():
+    appid = request.args.get('appid');
+    return "OK"
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8008,debug=True)
 
