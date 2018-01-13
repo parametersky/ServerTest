@@ -41,10 +41,10 @@ def getOrder():
     # result = ses.query(Order).filter(text('validTimer+length < :now')).params(now=now).all()
     result = ses.query(Order).filter(text('validTime+length > :now')).params(now=now).all()
 
-    data = {"code":0,"message":""}
+    data = {"code":0,"msg":""}
     if result and len(result) > 0:
         data['code'] = 0
-        data['message'] = "success"
+        data['msg'] = "success"
         data['data'] = {'length':len(result)}
         data['data']['orders'] = []
         for res in result:
@@ -53,12 +53,12 @@ def getOrder():
         return json.dumps(data)
     else:
         data['code'] = 1
-        data['message'] = "no result"
+        data['msg'] = "no result"
         print(json.dumps(data))
         return json.dumps(data)
 
 
-    
+
 @app.route('/login',methods=['GET'])
 def index():
     print("get request")
@@ -102,6 +102,18 @@ def userrecord():
         sportdata = request.form.get('sportdata', '')
         print('get user record for usr: ', uid, ' datetime: ', datetime, ' runtime: ', runtime, ' distance: ', distance,' calories:', calories, ' steps:', steps, ' sportdata:', sportdata)
     return "OK"
+
+@app.route('/checkBind',methods=['GET'])
+def checkbind():
+    appid = request.args.get('appid')
+    venueId = 232323
+    return '{"code":1,"msg":"sucess","data":{"appId":%s,"venueId":%d}}' % (appid,venueId)
+
+@app.route('/getPlaylist',methods=['GET'])
+def getPlaylist():
+    venueid= request.args.get('venueid')
+    return '{"code":1,"msg":"sucess","data":[{"deleted":false,"downloaded":false,"endtime":43453,"id":"1","playlist":[{"downloaded":false,"filetype":".png","id":"1","md5":"324srfef","name":"pic1","path":"http://gdown.baidu.com/data/wisegame/df3e9d433f59a315/aiqiyi_81000.apk","size":1234,"version_id":"1234"},{"downloaded":false,"filetype":".png","id":"2","md5":"324srfef","name":"pic2","path":"/hehehe","size":1234,"version_id":"1234"},{"deleted":false,"downloaded":false,"endtime":23422,"id":"2","playlist":[{"downloaded":false,"filetype":".png","id":"1","md5":"324srfef","name":"pic1","path":"/hehe","size":1234,"version_id":"1234"},{"downloaded":false,"filetype":".png","id":"2","md5":"324srfef","name":"pic2","path":"/hehehe","size":1234,"version_id":"1234"}],"starttime":1234,"verison":"2345"}],"starttime":1234,"verison":"1234"}]}'
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0',port=8008,debug=True)
 
